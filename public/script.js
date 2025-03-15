@@ -94,12 +94,18 @@ const saveCityForm = document.querySelector('#save-city-form');
 // Fetch API key from backend
 let API_KEY = "";
 
-fetch("/api/getApiKey")
-    .then(response => response.json())
-    .then(data => {
+async function getAPIKey() {
+    try {
+        const response = await fetch("/api/getApiKey");
+        const data = await response.json();
         API_KEY = data.apiKey;
-    })
-    .catch(error => console.error("❌ Error fetching API key:", error));
+
+        if (!API_KEY) throw new Error("API key is missing.");
+    } catch (error) {
+        console.error("❌ Error fetching API key:", error);
+    }
+}
+getAPIKey();  // Call the function
 
 
 if (!API_KEY || API_KEY === 'YOUR_DEFAULT_API_KEY') {
