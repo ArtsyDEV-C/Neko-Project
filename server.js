@@ -34,6 +34,7 @@ const mongoURI = process.env.MONGO_URI;
 if (!mongoURI) {
     console.warn("⚠️ Warning: MONGO_URI is missing. Using local fallback.");
 } else {
+   const connectDB = require('./db');
    connectDB();
 }
 
