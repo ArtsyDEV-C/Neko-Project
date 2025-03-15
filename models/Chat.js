@@ -6,4 +6,6 @@ const ChatSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
+ChatSchema.index({ timestamp: 1 });
+
 module.exports = mongoose.model("Chat", ChatSchema);
