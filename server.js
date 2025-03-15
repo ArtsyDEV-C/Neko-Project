@@ -209,6 +209,19 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
+async function generateAIResponse(userMessage) {
+    const aiResponse = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: userMessage }]
+    });
+
+    if (!aiResponse?.choices?.length) {
+        throw new Error("Invalid AI response");
+    }
+
+    return aiResponse.choices[0].message?.content?.trim() || "Sorry, I couldn't generate a response.";
+}
+
 app.post("/chat", async (req, res) => {  // ✅ Ensure function is async
   try {
     const userMessage = req.body.message;
