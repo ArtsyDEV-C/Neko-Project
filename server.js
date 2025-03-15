@@ -220,11 +220,11 @@ app.post("/chat", async (req, res) => {  // ✅ Ensure function is async
       messages: [{ role: "user", content: userMessage }]
     });
 
-    if (!aiResponse || !aiResponse.choices) {
+    if (!aiResponse || !aiResponse.choices || aiResponse.choices.length === 0) {
         throw new Error("Invalid AI response");
     }
+    const botMessage = aiResponse.choices[0].message?.content?.trim() || "Sorry, I couldn't generate a response.";
 
-    const botMessage = aiResponse.choices[0].message.content.trim();
 
     // ✅ Ensure await is inside an async function
     const chat = new Chat({ userMessage, botMessage });
