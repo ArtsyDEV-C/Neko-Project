@@ -290,11 +290,10 @@ function updateForecastUI(forecastList) {
 
 // Get user's current location
 
-// Replace the existing function with the updated code below
 navigator.geolocation.getCurrentPosition(async (position) => {
-    try {
-        await ensureAPIKey(); // Wait until the API key is retrieved
+    await ensureAPIKey(); // Ensure the API key is available
 
+    try {
         const { latitude, longitude } = position.coords;
         const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`;
 
@@ -549,9 +548,11 @@ function getWeatherMedia(condition, timeOfDay) {
     };
 }
 
-async function fetchWeatherForecast(city) {
-    const apiKey = '2149cbc5da7384b8ef7bcccf62b0bf68'; // Replace with your OpenWeatherMap API Key
-    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
+
+  async function fetchWeatherForecast(city) {
+    await ensureAPIKey(); // Ensure the API key is available
+
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${WEATHER_API_KEY}`;
 
     try {
         const response = await fetch(forecastUrl);
@@ -578,6 +579,7 @@ async function fetchWeatherForecast(city) {
             }
         });
 
+        // Generate HTML for the forecast
         let count = 0;
         for (let day in dailyForecasts) {
             if (count >= 10) break; // Show only 10 days
@@ -595,10 +597,11 @@ async function fetchWeatherForecast(city) {
 
         forecastContainer.innerHTML = forecastHtml;
     } catch (error) {
-        console.error("Error fetching forecast:", error);
+        console.error("❌ Forecast Fetch Error:", error);
         forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
     }
-}
+}  
+
 
 // Voice recognition for weather search
 if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
