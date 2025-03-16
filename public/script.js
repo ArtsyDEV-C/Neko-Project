@@ -491,8 +491,12 @@ async function getCitySuggestions(city) {
         return [];
     }
 }
+    searchBar.addEventListener('input', async () => {
+    if (!WEATHER_API_KEY) {
+        console.warn("⚠️ Waiting for API Key. Please retry in a few seconds.");
+        return;
+    }
 
-searchBar.addEventListener('input', async () => {
     const city = searchBar.value.trim();
     if (city.length < 2) return;
 
@@ -503,6 +507,8 @@ searchBar.addEventListener('input', async () => {
         .map(suggestion => `<li onclick="selectCity('${suggestion}')">${suggestion}</li>`)
         .join('');
 });
+
+
 
 function selectCity(city) {
     searchBar.value = city;
