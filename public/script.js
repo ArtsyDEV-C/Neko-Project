@@ -105,6 +105,7 @@ getAPIKey();  // ✅ Call function after definition
 
 
 
+const API_KEY = process.env.OPENWEATHER_API_KEY || "YOUR_DEFAULT_API_KEY";
 if (!API_KEY || API_KEY === 'YOUR_DEFAULT_API_KEY') {
     console.error("❌ ERROR: API key is missing. Set WEATHER_API_KEY in .env.");
 }
