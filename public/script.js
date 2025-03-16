@@ -104,23 +104,45 @@ async function ensureAPIKey(timeout = 10000) { // 10 seconds max wait
 }
 
 
+let WEATHER_API_KEY = null;
 
-
-
-let WEATHER_API_KEY = null;  // Ensure variable is initialized
 async function getWeatherAPIKey() {
     try {
+        console.log("⏳ Fetching API Key...");
         const response = await fetch("/api/getApiKey");
+        
         if (!response.ok) throw new Error("Failed to fetch API Key");
 
         const data = await response.json();
         WEATHER_API_KEY = data.apiKey;
-        console.log("✅ API Key Retrieved:", WEATHER_API_KEY);
+
+        if (!WEATHER_API_KEY) {
+            throw new Error("API Key is undefined or null");
+        }
+
+        console.log("✅ OpenWeather API Key Retrieved:", WEATHER_API_KEY);
     } catch (error) {
-        console.error("❌ Error fetching API Key:", error);
+        console.error("❌ Error fetching API Key:", error.message);
     }
 }
+
+// Ensure API key is loaded before fetching weather
+async function ensureAPIKey(timeout = 10000) {
+    const startTime = Date.now();
+    while (!WEATHER_API_KEY) {
+        if (Date.now() - startTime > timeout) {
+            console.error("⚠️ API Key not available. Skipping API requests.");
+            return;
+        }
+        console.warn("Waiting for API Key. Retrying...");
+        await new Promise(resolve => setTimeout(resolve, 2000)); 
+    }
+}
+
+// Call function on load
 getWeatherAPIKey();
+
+
 
 
 
