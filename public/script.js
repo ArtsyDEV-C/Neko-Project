@@ -158,6 +158,13 @@ function updateWeatherUI(data) {
          alert("❌ Error: Invalid weather data received.");
          return;
 
+     }
+
+    const weather = data.weather[0];
+    const main = data.main;
+    const wind = data.wind;
+    const sys = data.sys;
+
 
     // City name
     cityElement.innerText = `${data.name}, ${data.sys.country}`;
