@@ -198,7 +198,7 @@ if (!process.env.OPENAI_API_KEY) {
 }
 
   
-}
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY.trim(), // Ensure no extra spaces
@@ -207,17 +207,7 @@ const openai = new OpenAI({
 app.use(express.json());
 app.use(cors());
 
-// Connect MongoDB
-async function connectDB() {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log("✅ MongoDB Connected");
-    } catch (err) {
-        console.error("❌ MongoDB Connection Error:", err);
-        process.exit(1);
-    }
-}
-connectDB();
+
 
 
 
@@ -263,6 +253,7 @@ app.post("/chat", async (req, res) => {
     }
 });
 
+
      
 
 
@@ -271,32 +262,7 @@ app.post("/test", async (req, res) => {
     res.send("Success");
 });
 
- Fix /api/weather Route
-Issue at Line 133 & 276:
-Weather API response is being returned twice (res.json(response.data); is repeated).
-Ensure API key is validated before making a request.
-✅ Fix for Lines 133 & 276-280
-
-❌ Remove Incorrect Code:
-js
-Copy
-Edit
-app.get("/api/weather", async (req, res) => {
-    const city = req.query.city;
-    if (!city) {
-        return res.status(400).json({ error: "City name required" });
-    }
-
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
-
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch weather data" });
-    }
-});
+ 
 
 
 app.get("/api/weather", async (req, res) => {
@@ -321,6 +287,7 @@ app.get("/api/weather", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch weather data" });
     }
 });
+
 
 
 // Global Error Handling Middleware
