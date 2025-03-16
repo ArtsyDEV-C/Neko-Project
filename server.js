@@ -52,14 +52,16 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Express session
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'default_secret',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URI,
         collectionName: 'sessions'
-    })
+    }),
+    cookie: { secure: false, httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }
 }));
+
 
 // Passport middleware
 app.use(passport.initialize());
