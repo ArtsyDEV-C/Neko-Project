@@ -628,28 +628,6 @@ if (!window.recognition) {
 }
 
 
-        // Generate HTML for the forecast
-        let count = 0;
-        for (let day in dailyForecasts) {
-            if (count >= 10) break; // Show only 10 days
-            const forecast = dailyForecasts[day];
-
-            forecastHtml += `
-                <div class="forecast-item">
-                    <strong>${day}</strong>
-                    <img src="https://openweathermap.org/img/wn/${forecast.icon}.png" alt="${forecast.description}">
-                    <p>${forecast.description} - ${forecast.temp}°C</p>
-                </div>
-            `;
-            count++;
-        }
-
-        forecastContainer.innerHTML = forecastHtml;
-    } catch (error) {
-        console.error("❌ Forecast Fetch Error:", error);
-        forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
-    }
-}
     
 
 
