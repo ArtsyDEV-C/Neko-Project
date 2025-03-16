@@ -561,59 +561,7 @@ function getWeatherMedia(condition, timeOfDay) {
     };
 }
 
-async function fetchWeatherForecast(city) {
-    await ensureAPIKey(); // Ensure API key is available
 
-    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${WEATHER_API_KEY}`;
-
-    try {
-        const response = await fetch(forecastUrl);
-        if (!response.ok) throw new Error(`API Error: ${response.status} - ${response.statusText}`);
-
-        const data = await response.json();
-        if (data.cod !== "200") {
-            forecastContainer.innerHTML = `<div>Error fetching forecast data.</div>`;
-            return;
-        }
-
-        let forecastHtml = "";
-        const dailyForecasts = {}; // Store only one forecast per day
-
-        data.list.forEach((forecast) => {
-            const date = new Date(forecast.dt * 1000);
-            const day = date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
-
-            if (!dailyForecasts[day]) {
-                dailyForecasts[day] = {
-                    temp: Math.round(forecast.main.temp),
-                    description: forecast.weather[0].description,
-                    icon: forecast.weather[0].icon
-                };
-            }
-        });
-
-        // Generate HTML for forecast
-        let count = 0;
-        for (let day in dailyForecasts) {
-            if (count >= 10) break; // Show only 10 days
-            const forecast = dailyForecasts[day];
-
-            forecastHtml += `
-                <div class="forecast-item">
-                    <strong>${day}</strong>
-                    <img src="https://openweathermap.org/img/wn/${forecast.icon}.png" alt="${forecast.description}">
-                    <p>${forecast.description} - ${forecast.temp}°C</p>
-                </div>
-            `;
-            count++;
-        }
-
-        forecastContainer.innerHTML = forecastHtml;  // ✅ Now placed correctly
-    } catch (error) {
-        console.error("❌ Forecast Fetch Error:", error);
-        forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
-    }  // ✅ Closing brace added
-}
     
 
 // Voice recognition for weather search
