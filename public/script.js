@@ -629,13 +629,21 @@ async function fetchWeatherAlerts(city) {
     }
 }
 
-fetch("/api", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name: "Shreejith" })
-});
+async function testAPI() {
+    try {
+        const response = await fetch("/api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: "Shreejith" })
+        });
+
+        if (!response.ok) throw new Error("API test failed");
+        console.log("✅ API test successful");
+    } catch (error) {
+        console.error("❌ API test error:", error);
+    }
+}
+testAPI();
 
 (function () {
     if (window.recognitionInitialized) return;
