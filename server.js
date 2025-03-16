@@ -194,8 +194,8 @@ app.get('/cities', async (req, res) => {
 const OpenAI = require("openai");
 
 if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_KEY.startsWith("sk-")) {
-  console.error("❌ ERROR: Invalid OpenAI API key! Check your .env file.");
-  process.exit(1); // Stop server if API key is invalid
+  console.warn("⚠️ Warning: OpenAI API Key is missing or invalid. Some features may not work.") ;
+  
 }
 
 const openai = new OpenAI({
