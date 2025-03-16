@@ -82,15 +82,14 @@ const bcrypt = require("bcryptjs");
 
 app.post('/register', async (req, res) => {
     try {
-        console.log("Request Body:", req.body);
         const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: "Username and password are required" });
+        }
 
-        if (!username || !password) return res.status(400).json({ error: "Missing fields" });
-
-        // Check if the username already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
-            return res.status(400).json({ error: "Username already taken. Please choose another one." });
+            return res.status(400).json({ error: "User already exists" });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -102,9 +101,10 @@ app.post('/register', async (req, res) => {
         res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
         console.error("Registration Error:", error);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
