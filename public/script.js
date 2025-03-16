@@ -479,6 +479,7 @@ async function getCitySuggestions(city) {
 
     try {
         const response = await fetch(geoUrl);
+        if (!response.ok) throw new Error(`API Error ${response.status}: ${response.statusText}`);
         const data = await response.json();
 
         if (data.length === 0) {
