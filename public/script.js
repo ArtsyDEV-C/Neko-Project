@@ -91,6 +91,14 @@ const registerForm = document.querySelector('#register-form');
 const loginForm = document.querySelector('#login-form');
 const saveCityForm = document.querySelector('#save-city-form');
 
+async function ensureAPIKey() {
+    while (!WEATHER_API_KEY) {
+        console.warn("Waiting for API Key. Retrying...");
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for API key to load
+    }
+}
+
+
 
 
 let WEATHER_API_KEY = null;  // Ensure variable is initialized
@@ -242,25 +250,17 @@ fetchWeatherAlerts('YOUR_CITY_HERE');
     
 // Fetch weather data from API
 async function fetchWeather(city) {
-    if (!city || city.trim() === "") {
-        alert("Please enter a valid city name.");
-        return;
-    }
+    await ensureAPIKey();  // Wait until the API key is retrieved
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}`;
 
     try {
-        const weatherData = await fetchWeatherData(city);
+        const response = await fetch(weatherUrl);
+        if (!response.ok) throw new Error("Weather data fetch failed.");
 
-        if (!weatherData) {
-            alert("❌ Error fetching weather data.");
-            return;
-        }
-
-        updateWeatherUI(weatherData);
-        fetchWeatherForecast(city); // Fetch and update the forecast
-        fetchWeatherAlerts(city); // Fetch and display weather alerts
+        const data = await response.json();
+        updateWeatherUI(data);
     } catch (error) {
-        console.error("❌ Error fetching weather data:", error);
-        alert(`❌ Error: ${error.message}`);
+        console.error("❌ Weather Fetch Error:", error);
     }
 }
 
@@ -293,10 +293,7 @@ function updateForecastUI(forecastList) {
 // Replace the existing function with the updated code below
 navigator.geolocation.getCurrentPosition(async (position) => {
     try {
-        while (!WEATHER_API_KEY) {
-            console.warn("Waiting for API Key. Retrying...");
-            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for API key to load
-        }
+        await ensureAPIKey(); // Wait until the API key is retrieved
 
         const { latitude, longitude } = position.coords;
         const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`;
@@ -313,6 +310,7 @@ navigator.geolocation.getCurrentPosition(async (position) => {
 }, () => {
     alert("Location permission denied. Enter city manually.");
 });
+
 
     
 // Add console debugging message
@@ -458,20 +456,24 @@ const updateWeatherLayer = (data) => {
   });
 };
 
-// Example using Web Speech API
-let recognition;
+
 if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
-    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+    
     recognition.onresult = (event) => {
-        const command = event.results[0][0].transcript;
-        if (command.includes('weather')) {
-            fetchWeather('current location');
-        }
+        const city = event.results[0][0].transcript;
+        console.log("Recognized City:", city);
+        fetchWeather(city);
     };
-    recognition.start();
+
+    document.querySelector("#voice-search").addEventListener("click", () => {
+        recognition.start();
+    });
 } else {
     console.warn("❌ Speech Recognition not supported in this browser.");
 }
+
 
 
 async function getCitySuggestions(city) {
