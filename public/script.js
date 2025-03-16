@@ -243,20 +243,32 @@ fetchWeatherAlerts('YOUR_CITY_HERE');
     
 // Fetch weather data from API
 async function fetchWeather(city) {
-    await ensureAPIKey();  // Wait until the API key is retrieved
+    if (!city || city.trim() === "") {
+        alert("Please enter a valid city name.");
+        return;
+    }
+
+    await ensureAPIKey();  // Ensure API Key is loaded
+
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}`;
 
     try {
+        loadingSpinner.style.display = "block"; // Show loading animation
+
         const response = await fetch(weatherUrl);
-        if (!response.ok) throw new Error("Weather data fetch failed.");
+        if (!response.ok) throw new Error(`Error: ${response.status} - ${response.statusText}`);
 
         const data = await response.json();
         updateWeatherUI(data);
     } catch (error) {
+        alert(`❌ Error fetching weather: ${error.message}`);
         console.error("❌ Weather Fetch Error:", error);
+    } finally {
+        loadingSpinner.style.display = "none"; // Hide loading animation
     }
 }
 
+    
 // Function to update forecast data on the page
 function updateForecastUI(forecastList) {
     const forecastContainer = document.getElementById('forecast');
