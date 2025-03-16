@@ -602,6 +602,7 @@ async function testAPI() {
     } catch (error) {
         console.error("❌ API test error:", error);
     }
+
 }
 testAPI();
 
