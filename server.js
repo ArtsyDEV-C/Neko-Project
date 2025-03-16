@@ -1,4 +1,7 @@
 require('dotenv').config();
+console.log("🔍 Checking OpenWeather API Key:", process.env.OPENWEATHER_API_KEY);
+
+
 
 const express = require('express');
 const app = express();
