@@ -672,3 +672,8 @@ async function testAPI() {
 testAPI();
 
 
+
+
+console.log("✅ Script loaded successfully.");
+
+
