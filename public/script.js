@@ -91,12 +91,18 @@ const registerForm = document.querySelector('#register-form');
 const loginForm = document.querySelector('#login-form');
 const saveCityForm = document.querySelector('#save-city-form');
 
-async function ensureAPIKey() {
+async function ensureAPIKey(timeout = 10000) { // 10 seconds max wait
+    const startTime = Date.now();
     while (!WEATHER_API_KEY) {
+        if (Date.now() - startTime > timeout) {
+            console.error("⚠️ API Key not available. Skipping API requests.");
+            return;
+        }
         console.warn("Waiting for API Key. Retrying...");
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for API key to load
+        await new Promise(resolve => setTimeout(resolve, 2000)); 
     }
 }
+
 
 
 
