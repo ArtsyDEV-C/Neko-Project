@@ -126,23 +126,6 @@ async function getWeatherAPIKey() {
     }
 }
 
-// Ensure API key is loaded before fetching weather
-async function ensureAPIKey(timeout = 10000) {
-    const startTime = Date.now();
-    while (!WEATHER_API_KEY) {
-        if (Date.now() - startTime > timeout) {
-            console.error("⚠️ API Key not available. Skipping API requests.");
-            return;
-        }
-        console.warn("Waiting for API Key. Retrying...");
-        await new Promise(resolve => setTimeout(resolve, 2000)); 
-    }
-}
-
-// Call function on load
-getWeatherAPIKey();
-
-
 
 
 
