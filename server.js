@@ -74,11 +74,21 @@ app.get('/public/videos/:filename', (req, res) => {
 });
 
 // Routes
+const bcrypt = require("bcryptjs");
+
 app.post('/register', async (req, res) => {
     try {
         console.log("Request Body:", req.body);
         const { username, password } = req.body;
+
         if (!username || !password) return res.status(400).json({ error: "Missing fields" });
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new User({ username, password: hashedPassword });
+        await newUser.save();
+
         res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
         console.error("Registration Error:", error);
@@ -91,17 +101,21 @@ app.post("/login", async (req, res) => {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
 
-        const isMatch = user ? await user.comparePassword(password) : false;
-        if (!user || !isMatch) {
+        if (!user) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
-       
+
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
+
         res.json({ message: "Login successful", user });
     } catch (error) {
         console.error("❌ Login error:", error);
         res.status(500).json({ error: "Server error" });
     }
-  });
+});
 
 app.post('/cities', async (req, res) => {
     try {
