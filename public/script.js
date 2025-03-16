@@ -91,19 +91,7 @@ const registerForm = document.querySelector('#register-form');
 const loginForm = document.querySelector('#login-form');
 const saveCityForm = document.querySelector('#save-city-form');
 
-// Fetch API key from backend
-async function getAPIKey() {
-    try {
-        const response = await fetch("/api/getApiKey");
-        if (!response.ok) throw new Error("Failed to fetch API Key");
 
-        const data = await response.json();
-        console.log("✅ API Key Retrieved:", data.apiKey);
-    } catch (error) {
-        console.error("❌ Error fetching API Key:", error);
-    }
-}
-getAPIKey();  // ✅ Call function after definition
 
 let WEATHER_API_KEY;
 async function getWeatherAPIKey() {
