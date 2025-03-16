@@ -202,14 +202,28 @@ function updateWeatherUI(data) {
         <div><strong>Day 10:</strong> Snowy - 5°C</div>
     `;
 
-// Provide recommendations based on weather
+let WEATHER_API_KEY;
+async function getWeatherAPIKey() {
+    try {
+        const response = await fetch("/api/getApiKey");
+        if (!response.ok) throw new Error("Failed to fetch API Key");
+
+        const data = await response.json();
+        WEATHER_API_KEY = data.apiKey;
+    } catch (error) {
+        console.error("❌ Error fetching API Key:", error);
+    }
+}
+getWeatherAPIKey();
+
+// Use the fetched API key for subsequent API calls
 async function fetchWeatherAlerts(city) {
-    if (!process.env.OPENWEATHER_API_KEY) {
-        console.error("❌ Missing OpenWeather API Key. Set OPENWEATHER_API_KEY in .env");
+    if (!WEATHER_API_KEY) {
+        console.error("❌ Missing OpenWeather API Key. Set WEATHER_API_KEY in .env");
         return;
     }
 
-    const alertUrl = `https://api.openweathermap.org/data/2.5/alerts?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}`;
+    const alertUrl = `https://api.openweathermap.org/data/2.5/alerts?q=${city}&appid=${WEATHER_API_KEY}`;
 
     try {
         const response = await fetch(alertUrl);
