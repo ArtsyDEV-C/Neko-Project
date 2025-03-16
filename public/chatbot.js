@@ -19,9 +19,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             const data = await response.json();
-            const botReply = data.response || "I'm not sure how to respond.";
+            const botReply = data?.response?.trim()
 
-            // Display chatbot response
+         // Display chatbot response
             chatbox.innerHTML += `<div class="message bot">${botReply}</div>`;
 
             // Scroll to bottom
@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
             input.value = "";
         } catch (error) {
             console.error("Chatbot Error:", error);
+            chatbox.innerHTML += `<div class="message bot">❌ Error: Unable to fetch response.</div>`;
+            
         }
     }
 
