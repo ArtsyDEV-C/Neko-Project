@@ -20,8 +20,10 @@ const port = process.env.PORT || Math.floor(Math.random() * (50000 - 3000) + 300
 
 // API route to send API key to frontend
 app.get("/api/getApiKey", (req, res) => {
-   res.json({ apiKey: process.env.OPENWEATHER_API_KEY || "" });
-
+    if (!process.env.OPENWEATHER_API_KEY) {
+        return res.status(500).json({ error: "API Key not found" });
+    }
+    res.json({ apiKey: process.env.OPENWEATHER_API_KEY });
 });
 
 // Twilio configuration
