@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
             const botReply = data?.response?.trim() || "I'm not sure how to respond.";
 
-         // Display chatbot response
+            // Display chatbot response
             chatbox.innerHTML += `<div class="message bot">${botReply}</div>`;
 
             // Scroll to bottom
@@ -32,21 +32,15 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Chatbot Error:", error);
             chatbox.innerHTML += `<div class="message bot">❌ Error: Unable to fetch response.</div>`;
-            
         }
     }
 
     sendButton.addEventListener("click", sendMessage);
-});
-      // Display chatbot response
-      chatbox.innerHTML += `<div class="message bot">${botReply}</div>`;
-      
-      // Scroll to bottom
-      chatbox.scrollTop = chatbox.scrollHeight;
-      
-      // Clear input
-      input.value = "";
+    
+    // Allow sending message on pressing Enter
+    input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
     });
-  });
-  
-  
+});
