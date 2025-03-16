@@ -251,7 +251,7 @@ async function fetchWeather(city) {
 
     await ensureAPIKey();  // Ensure API Key is loaded
 
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}`;
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WEATHER_API_KEY}`;
 
     try {
         loadingSpinner.style.display = "block"; // Show loading animation
@@ -293,7 +293,7 @@ function updateForecastUI(forecastList) {
         `;
         forecastContainer.innerHTML += forecastHTML;
     }
-}
+
 
 catch (error) {
     console.error("❌ Forecast Fetch Error:", error);
@@ -598,16 +598,7 @@ async function fetchWeatherForecast(city) {
             if (count >= 10) break; // Show only 10 days
             const forecast = dailyForecasts[day];
 
-            forecastHtml += `
-                <div class="forecast-item">
-                    <strong>${day}</strong>
-                    <img src="https://openweathermap.org/img/wn/${forecast.icon}.png" alt="${forecast.description}">
-                    <p>${forecast.description} - ${forecast.temp}°C</p>
-                </div>
-            `;
-            count++;
-        }
-
+           
         forecastContainer.innerHTML = forecastHtml;
     } catch (error) {
         console.error("❌ Forecast Fetch Error:", error);
