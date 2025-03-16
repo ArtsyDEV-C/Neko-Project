@@ -82,6 +82,9 @@ app.get('/public/videos/:filename', (req, res) => {
 // Routes
 const bcrypt = require("bcryptjs");
 
+app.get('/api, (req,res) => {
+        res.json({ message: "API is working correctly" });
+
 
 app.post('/register', async (req, res) => {
     try {
