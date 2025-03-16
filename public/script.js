@@ -105,12 +105,21 @@ async function getAPIKey() {
 }
 getAPIKey();  // ✅ Call function after definition
 
+let WEATHER_API_KEY;
+async function getWeatherAPIKey() {
+    try {
+        const response = await fetch("/api/getApiKey");
+        if (!response.ok) throw new Error("Failed to fetch API Key");
 
-
-const API_KEY = process.env.OPENWEATHER_API_KEY || "YOUR_DEFAULT_API_KEY";
-if (!API_KEY || API_KEY === 'YOUR_DEFAULT_API_KEY') {
-    console.error("❌ ERROR: API key is missing. Set WEATHER_API_KEY in .env.");
+        const data = await response.json();
+        WEATHER_API_KEY = data.apiKey;
+        console.log("✅ API Key Retrieved:", WEATHER_API_KEY);
+    } catch (error) {
+        console.error("❌ Error fetching API Key:", error);
+    }
 }
+getWeatherAPIKey();
+
 
 
 // Function to get the current date and time
@@ -291,24 +300,23 @@ function updateForecastUI(forecastList) {
 }
 
 // Get user's current location
+
 navigator.geolocation.getCurrentPosition(async (position) => {
-    const { latitude, longitude } = position.coords;
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
     try {
+        const { latitude, longitude } = position.coords;
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`;
+
         const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to fetch location-based weather");
+
         const data = await response.json();
-
-        if (!data || !data.weather || data.weather.length === 0) {
-            console.error("Weather data not found", data);
-            alert('Weather data not found!');
-            return;
-        }
-
         updateWeatherUI(data);
     } catch (error) {
-        console.error("Error fetching weather data:", error);
-        alert('Error fetching weather data!');
+        console.error("❌ Location Error:", error);
+        alert("Location access denied. Please enter a city manually.");
     }
+}, () => {
+    alert("Location permission denied. Enter city manually.");
 });
 
 // Add console debugging message
