@@ -598,14 +598,22 @@ async function fetchWeatherForecast(city) {
             if (count >= 10) break; // Show only 10 days
             const forecast = dailyForecasts[day];
 
-           
-        forecastContainer.innerHTML = forecastHtml;
+            forecastHtml += `
+                <div class="forecast-item">
+                    <strong>${day}</strong>
+                    <img src="https://openweathermap.org/img/wn/${forecast.icon}.png" alt="${forecast.description}">
+                    <p>${forecast.description} - ${forecast.temp}°C</p>
+                </div>
+            `;
+            count++;
+        }
+
+        forecastContainer.innerHTML = forecastHtml;  // ✅ Now placed correctly
     } catch (error) {
         console.error("❌ Forecast Fetch Error:", error);
         forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
-    }
+    }  // ✅ Closing brace added
 }
-
     
 
 // Voice recognition for weather search
