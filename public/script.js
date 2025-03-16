@@ -92,18 +92,17 @@ const loginForm = document.querySelector('#login-form');
 const saveCityForm = document.querySelector('#save-city-form');
 
 // Fetch API key from backend
-let API_KEY = "";
-
 async function getAPIKey() {
     try {
         const response = await fetch("/api/getApiKey");
         const data = await response.json();
-        console.log("API Key Retrieved:", data.apiKey);
+        console.log("✅ API Key Retrieved:", data.apiKey);
     } catch (error) {
-        console.error("❌ Error fetching API key:", error);
+        console.error("❌ Error fetching API Key:", error);
     }
 }
-getAPIKey();  // Call the function
+getAPIKey();  // ✅ Call function after definition
+
 
 
 if (!API_KEY || API_KEY === 'YOUR_DEFAULT_API_KEY') {
