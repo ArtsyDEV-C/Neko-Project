@@ -614,31 +614,62 @@ if (!window.recognition) {
     console.warn("❌ Speech Recognition not supported in this browser.");
 }
 
+async function fetchWeatherForecast(city) {
+    await ensureAPIKey(); // Ensure the API key is available
 
-    
-async function fetchWeatherAlerts(city) {
-    const apiKey = '2149cbc5da7384b8ef7bcccf62b0bf68'; // Replace with your OpenWeatherMap API Key
-    const alertUrl = `https://api.openweathermap.org/data/2.5/alerts?q=${city}&appid=${apiKey}`;
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${WEATHER_API_KEY}`;
 
     try {
-        const response = await fetch(alertUrl);
+        const response = await fetch(forecastUrl);
         const data = await response.json();
 
-        if (data.alerts && data.alerts.length > 0) {
-            let alertHtml = "";
-            data.alerts.forEach(alert => {
-                alertHtml += `<div class="alert">${alert.event}: ${alert.description}</div>`;
-            });
-
-            document.getElementById("weather-alerts").innerHTML = alertHtml;
-        } else {
-            document.getElementById("weather-alerts").innerHTML = "<div>No alerts for this location.</div>";
+        if (data.cod !== "200") {
+            forecastContainer.innerHTML = `<div>Error fetching forecast data.</div>`;
+            return;
         }
+
+        let forecastHtml = "";
+        const dailyForecasts = {}; // Store only one forecast per day
+
+        data.list.forEach((forecast) => {
+            const date = new Date(forecast.dt * 1000);
+            const day = date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+
+            if (!dailyForecasts[day]) {
+                dailyForecasts[day] = {
+                    temp: Math.round(forecast.main.temp),
+                    description: forecast.weather[0].description,
+                    icon: forecast.weather[0].icon
+                };
+            }
+        });
+
+        // Generate HTML for the forecast
+        let count = 0;
+        for (let day in dailyForecasts) {
+            if (count >= 10) break; // Show only 10 days
+            const forecast = dailyForecasts[day];
+
+            forecastHtml += `
+                <div class="forecast-item">
+                    <strong>${day}</strong>
+                    <img src="https://openweathermap.org/img/wn/${forecast.icon}.png" alt="${forecast.description}">
+                    <p>${forecast.description} - ${forecast.temp}°C</p>
+                </div>
+            `;
+            count++;
+        }
+
+        forecastContainer.innerHTML = forecastHtml;
     } catch (error) {
-        console.error("Error fetching alerts:", error);
+        console.error("❌ Forecast Fetch Error:", error);
+        forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
     }
 }
+    
 
+
+    
 async function testAPI() {
     try {
         const response = await fetch("/api", {
@@ -655,22 +686,4 @@ async function testAPI() {
 }
 testAPI();
 
-(function () {
-    if (window.recognitionInitialized) return;
-    window.recognitionInitialized = true;
-
-    // Voice recognition for weather search
-    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "en-US";
-    recognition.onresult = (event) => {
-        const city = event.results[0][0].transcript;
-        console.log("Recognized City:", city);
-        fetchWeather(city);
-    };
-
-    // Start voice search when microphone button is clicked
-    document.querySelector("#voice-search").addEventListener("click", () => {
-        recognition.start();
-    });
-})();
 
