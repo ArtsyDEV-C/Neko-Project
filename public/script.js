@@ -153,13 +153,26 @@ function formatTime(date) {
 
 // Function to update weather data on the page
 function updateWeatherUI(data) {
-    const weather = data.weather[0];
-    const main = data.main;
-    const wind = data.wind;
-    const sys = data.sys;
+     if (!data || !data.weather || !data.main || !data.sys) {
+         console.error("❌ Invalid weather data received");
+         alert("❌ Error: Invalid weather data received.");
+         return;
+
 
     // City name
     cityElement.innerText = `${data.name}, ${data.sys.country}`;
+
+
+      
+     // Handle cases where sunrise and sunset might be undefined
+     if (!sys.sunrise || !sys.sunset) {
+         console.warn("Sunrise or sunset time missing in API response");
+         return;
+     }
+ 
+     const sunrise = new Date(sys.sunrise * 1000);
+     const sunset = new Date(sys.sunset * 1000);
+            
 
     // Determine if it's day, night, or evening
     const now = new Date();
@@ -639,3 +652,12 @@ testAPI();
 console.log("✅ Script loaded successfully.");
 
 
+
+
+
+// Add this function after line 700
+function selectCity(city) {
+    searchBar.value = city;
+    document.querySelector("#city-suggestions").innerHTML = "";
+    fetchWeather(city);
+}
