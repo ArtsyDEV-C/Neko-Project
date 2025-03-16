@@ -126,6 +126,10 @@ async function getWeatherAPIKey() {
     }
 }
 
+(async function initializeAPIKey() {
+    await getWeatherAPIKey();
+})();
+
 
 
 
