@@ -106,20 +106,28 @@ app.post('/register', async (req, res) => {
 });
 
 
-app.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+app.post('/login', async (req, res) => {
     try {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ error: "Username and password are required" });
+        }
+
         const user = await User.findOne({ username });
-        if (!user) return res.status(400).json({ error: "User not found" });
+        if (!user) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+        if (!isMatch) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
 
-        req.session.user = user;
-        res.json({ message: "✅ Login successful", user });
+        req.session.user = { id: user._id, username: user.username }; // Store user session
+        res.status(200).json({ message: "Login successful", user: req.session.user });
     } catch (error) {
-        console.error("❌ Login Error:", error);
-        res.status(500).json({ error: "Server error. Try again later." });
+        console.error("Login Error:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
