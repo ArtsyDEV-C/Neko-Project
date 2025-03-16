@@ -2,19 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatbox = document.getElementById("chatbox");
     const input = document.getElementById("chat-input");
     const sendButton = document.getElementById("send-btn");
-  
-    sendButton.addEventListener("click", async function () {
-      const userMessage = input.value.trim();
-      if (userMessage === "") return;
-  
-      // Display user message
-      chatbox.innerHTML += `<div class="message user">${userMessage}</div>`;
-  
-      // Send request to chatbot API
-     document.addEventListener("DOMContentLoaded", function () {
-    const chatbox = document.getElementById("chatbox");
-    const input = document.getElementById("chat-input");
-    const sendButton = document.getElementById("send-btn");
 
     async function sendMessage() {
         const userMessage = input.value.trim();
@@ -49,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sendButton.addEventListener("click", sendMessage);
 });
-  
       // Display chatbot response
       chatbox.innerHTML += `<div class="message bot">${botReply}</div>`;
       
