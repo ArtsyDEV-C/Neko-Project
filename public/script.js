@@ -199,8 +199,8 @@ function updateWeatherUI(data) {
         <div><strong>Day 10:</strong> Snowy - 5°C</div>
     `;
 
-    // Provide recommendations based on weather
- async function fetchWeatherAlerts(city) {
+// Provide recommendations based on weather
+async function fetchWeatherAlerts(city) {
     if (!process.env.OPENWEATHER_API_KEY) {
         console.error("❌ Missing OpenWeather API Key. Set OPENWEATHER_API_KEY in .env");
         return;
@@ -219,18 +219,12 @@ function updateWeatherUI(data) {
         return null;
     }
 }
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`API Error ${response.status}: ${response.statusText}`);
-        
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("❌ Weather API Error:", error.message);
-        return null;
-    }
-}
 
+// Call the function with appropriate city
+fetchWeatherAlerts('YOUR_CITY_HERE');
+
+
+    
 // Fetch weather data from API
 async function fetchWeather(city) {
     if (!city || city.trim() === "") {
