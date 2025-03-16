@@ -271,7 +271,12 @@ async function fetchWeather(city) {
         return;
     }
 
-    await ensureAPIKey();  // Ensure API Key is loaded
+    await ensureAPIKey();  // Ensure API Key is loaded before proceeding
+
+    if (!WEATHER_API_KEY) {
+        alert("❌ API Key is missing. Cannot fetch weather data.");
+        return;
+    }
 
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WEATHER_API_KEY}`;
 
