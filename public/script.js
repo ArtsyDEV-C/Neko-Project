@@ -223,7 +223,7 @@ async function fetchWeatherAlerts(city) {
         return;
     }
 
-    const alertUrl = `https://api.openweathermap.org/data/2.5/alerts?q=${city}&appid=${WEATHER_API_KEY}`;
+    const alertUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${WEATHER_API_KEY}`;
 
     try {
         const response = await fetch(alertUrl);
