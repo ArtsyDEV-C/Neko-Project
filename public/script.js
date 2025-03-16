@@ -270,35 +270,35 @@ async function fetchWeather(city) {
 }
 
     
-
 // Function to update forecast data on the page
 function updateForecastUI(forecastList) {
     const forecastContainer = document.getElementById('forecast');
     forecastContainer.innerHTML = ""; // Clear old data
 
-    for (let i = 0; i < forecastList.length; i += 8) { // Every 24 hours
-        const forecast = forecastList[i];
-        const date = new Date(forecast.dt * 1000);
-        const day = date.toLocaleDateString('en-US', { weekday: 'long' });
-        const temp = Math.round(forecast.main.temp);
-        const weather = forecast.weather[0].main;
-        const icon = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
+    try {
+        for (let i = 0; i < forecastList.length; i += 8) { // Every 24 hours
+            const forecast = forecastList[i];
+            const date = new Date(forecast.dt * 1000);
+            const day = date.toLocaleDateString('en-US', { weekday: 'long' });
+            const temp = Math.round(forecast.main.temp);
+            const weather = forecast.weather[0].main;
+            const icon = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}.png`;
 
-        const forecastHTML = `
-            <div class="forecast-item">
-                <strong>${day}</strong>
-                <img src="${icon}" alt="${weather}">
-                <p>${weather} - ${temp}°C</p>
-            </div>
-        `;
-        forecastContainer.innerHTML += forecastHTML;
+            const forecastHTML = `
+                <div class="forecast-item">
+                    <strong>${day}</strong>
+                    <img src="${icon}" alt="${weather}">
+                    <p>${weather} - ${temp}°C</p>
+                </div>
+            `;
+            forecastContainer.innerHTML += forecastHTML;
+        }
+    } catch (error) {
+        console.error("❌ Forecast Fetch Error:", error);
+        forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
     }
-
-
-catch (error) {
-    console.error("❌ Forecast Fetch Error:", error);
-    forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
 }
+
 
 
 
