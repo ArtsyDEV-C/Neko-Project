@@ -474,7 +474,7 @@ if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
 
 
 async function getCitySuggestions(city) {
-    const apiKey = '2149cbc5da7384b8ef7bcccf62b0bf68'; // Replace with your actual API key
+    const apiKey = WEATHER_API_KEY;
     const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${apiKey}`;
 
     try {
