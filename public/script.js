@@ -329,27 +329,33 @@ updateDateTime();
 
 // User authentication and city save functions
 
-// Register user
+// Replace the existing function with the updated code below
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(registerForm);
     const data = Object.fromEntries(formData.entries());
 
-    async function registerUser(username, password) {
-    try {
-        const response = await fetch('/register', {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password })
-        });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(data.password, salt);
 
-        const data = await response.json();
-        console.log("✅ Registration Response:", data);
-    } catch (error) {
-        console.error("❌ Registration Error:", error);
+    async function registerUser(username, hashedPassword) {
+        try {
+            const response = await fetch('/register', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password: hashedPassword })
+            });
+
+            const responseData = await response.json();
+            console.log("✅ Registration Response:", responseData);
+        } catch (error) {
+            console.error("❌ Registration Error:", error);
+        }
     }
-}
 
+    registerUser(data.username, hashedPassword);
+});
+    
 async function loginUser(username, password) {
     try {
         const response = await fetch('/login', {
