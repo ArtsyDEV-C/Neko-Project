@@ -348,22 +348,28 @@ registerForm.addEventListener('submit', async (e) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(data.password, salt);
 
-    async function registerUser(username, hashedPassword) {
-        try {
-            const response = await fetch('/register', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password: hashedPassword })
-            });
+    registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(registerForm);
+    const data = Object.fromEntries(formData.entries());
 
-            const responseData = await response.json();
-            console.log("✅ Registration Response:", responseData);
-        } catch (error) {
-            console.error("❌ Registration Error:", error);
+    try {
+        const response = await fetch('/register', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)  // Remove bcrypt hashing in frontend
+        });
+
+        const responseData = await response.json();
+        if (response.ok) {
+            alert("✅ Registration successful!");
+        } else {
+            alert(`❌ Registration failed: ${responseData.message}`);
         }
+    } catch (error) {
+        console.error("❌ Registration Error:", error);
+        alert("❌ Error occurred during registration.");
     }
-
-    registerUser(data.username, hashedPassword);
 });
     
 async function loginUser(username, password) {
