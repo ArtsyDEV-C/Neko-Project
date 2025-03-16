@@ -44,8 +44,8 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cors());
 app.use(methodOverride('_method'));
 
+app.use(express.static(path.join(__dirname, "public")));
 
-app.use(express.static(path.resolve(__dirname, "public")));
 
 
 // Express session
@@ -206,12 +206,17 @@ app.use(express.json());
 app.use(cors());
 
 // Connect MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => {
-     console.error("❌ MongoDB Connection Error:", err);
-     process.exit(1);
-  });
+async function connectDB() {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log("✅ MongoDB Connected");
+    } catch (err) {
+        console.error("❌ MongoDB Connection Error:", err);
+        process.exit(1);
+    }
+}
+connectDB();
+
 
 async function generateAIResponse(userMessage) {
     const aiResponse = await openai.chat.completions.create({
@@ -226,34 +231,33 @@ async function generateAIResponse(userMessage) {
     return aiResponse.choices[0].message?.content?.trim() || "Sorry, I couldn't generate a response.";
 }
 
-app.post("/chat", async (req, res) => {  // ✅ Ensure function is async
-  try {
-    const userMessage = req.body.message;
-    if (!userMessage) return res.json({ response: "Please type something." });
+app.post("/chat", async (req, res) => {
+    try {
+        const userMessage = req.body.message;
+        if (!userMessage) {
+            return res.status(400).json({ error: "Message cannot be empty." });
+        }
 
-    // Generate AI response
-    const aiResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: userMessage }]
-    });
+        const aiResponse = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: userMessage }]
+        });
 
-    if (!aiResponse || !aiResponse.choices || aiResponse.choices.length === 0) {
-        throw new Error("Invalid AI response");
+        if (!aiResponse?.choices?.length) {
+            return res.status(500).json({ error: "AI service error. Try again later." });
+        }
+
+        const botMessage = aiResponse.choices[0].message?.content?.trim() || "Sorry, I couldn't generate a response.";
+        await new Chat({ userMessage, botMessage }).save();
+
+        res.json({ response: botMessage });
+
+    } catch (error) {
+        console.error("AI Chat Error:", error);
+        res.status(500).json({ error: "AI service is currently unavailable." });
     }
-    const botMessage = aiResponse.choices[0].message?.content?.trim() || "Sorry, I couldn't generate a response.";
-
-
-    // ✅ Ensure await is inside an async function
-    const chat = new Chat({ userMessage, botMessage });
-    await chat.save();  // ✅ Now it works inside an async function
-
-    res.json({ response: botMessage });
-
-  } catch (error) {
-    console.error("AI Error:", error);
-    res.json({ response: "I'm having trouble thinking right now. Try again later." });
-  }
 });
+
 
 app.post("/test", async (req, res) => {
     console.log(req.body); // ✅ Access `req.body` normally
