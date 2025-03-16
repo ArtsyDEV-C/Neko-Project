@@ -225,12 +225,13 @@ async function getWeatherAPIKey() {
 }
 getWeatherAPIKey();
 
+
 // Use the fetched API key for subsequent API calls
 async function fetchWeatherAlerts(city) {
-   if (!WEATHER_API_KEY) {
-    console.error("⚠️ Warning: OpenWeather API Key is missing. Weather data may not work.");
-    return;
-   }
+    if (!WEATHER_API_KEY) {
+        console.error("⚠️ Warning: OpenWeather API Key is missing. Weather data may not work.");
+        return;
+    }
 
     const alertUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${WEATHER_API_KEY}`;
 
