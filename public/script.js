@@ -628,35 +628,6 @@ if (!window.recognition) {
     console.warn("❌ Speech Recognition not supported in this browser.");
 }
 
-async function fetchWeatherForecast(city) {
-    await ensureAPIKey(); // Ensure the API key is available
-
-    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${WEATHER_API_KEY}`;
-
-    try {
-        const response = await fetch(forecastUrl);
-        const data = await response.json();
-
-        if (data.cod !== "200") {
-            forecastContainer.innerHTML = `<div>Error fetching forecast data.</div>`;
-            return;
-        }
-
-        let forecastHtml = "";
-        const dailyForecasts = {}; // Store only one forecast per day
-
-        data.list.forEach((forecast) => {
-            const date = new Date(forecast.dt * 1000);
-            const day = date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
-
-            if (!dailyForecasts[day]) {
-                dailyForecasts[day] = {
-                    temp: Math.round(forecast.main.temp),
-                    description: forecast.weather[0].description,
-                    icon: forecast.weather[0].icon
-                };
-            }
-        });
 
         // Generate HTML for the forecast
         let count = 0;
