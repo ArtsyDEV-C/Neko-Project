@@ -193,8 +193,10 @@ app.get('/cities', async (req, res) => {
 
 const OpenAI = require("openai");
 
-if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_API_KEY.startsWith("sk-")) {
-  console.warn("⚠️ Warning: OpenAI API Key is missing or invalid. Some features may not work.") ;
+if (!process.env.OPENAI_API_KEY) {
+    console.warn("⚠️ Warning: OpenAI API Key is missing. AI responses will not work.");
+}
+
   
 }
 
@@ -206,10 +208,19 @@ app.use(express.json());
 app.use(cors());
 
 // Connect MongoDB
-async function connectDB() {
+ async function connectDB() {
     try {
         await mongoose.connect(process.env.MONGO_URI);
         console.log("✅ MongoDB Connected");
+    } catch (err) {
+        console.error("❌ MongoDB Connection Error:", err);
+        process.exit(1);
+    }
+}
+connectDB();
+      
+
+
     } catch (err) {
         console.error("❌ MongoDB Connection Error:", err);
         process.exit(1);
@@ -258,6 +269,8 @@ app.post("/chat", async (req, res) => {
     }
 });
 
+     
+
 
 app.post("/test", async (req, res) => {
     console.log(req.body); // ✅ Access `req.body` normally
@@ -267,19 +280,26 @@ app.post("/test", async (req, res) => {
 app.get("/api/weather", async (req, res) => {
     const city = req.query.city;
     if (!city) {
-        return res.status(400).json({ error: "City name required" });
+        return res.status(400).json({ error: "City name is required." });
     }
 
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
-    
+    if (!process.env.OPENWEATHER_API_KEY) {
+        return res.status(500).json({ error: "API key is missing. Set OPENWEATHER_API_KEY in .env." });
+    }
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`;
+
     try {
         const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to fetch weather data");
         const data = await response.json();
         res.json(data);
     } catch (error) {
+        console.error("❌ Weather API Error:", error);
         res.status(500).json({ error: "Failed to fetch weather data" });
     }
 });
+
 
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {
