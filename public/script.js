@@ -95,6 +95,8 @@ const saveCityForm = document.querySelector('#save-city-form');
 async function getAPIKey() {
     try {
         const response = await fetch("/api/getApiKey");
+        if (!response.ok) throw new Error("Failed to fetch API Key");
+
         const data = await response.json();
         console.log("✅ API Key Retrieved:", data.apiKey);
     } catch (error) {
