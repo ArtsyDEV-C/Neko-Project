@@ -327,45 +327,37 @@ registerForm.addEventListener('submit', async (e) => {
     const formData = new FormData(registerForm);
     const data = Object.fromEntries(formData.entries());
 
+    async function registerUser(username, password) {
     try {
         const response = await fetch('/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
         });
 
-        if (response.ok) {
-            alert('User registered successfully');
-        } else {
-            alert('Error registering user');
-        }
+        const data = await response.json();
+        console.log("✅ Registration Response:", data);
     } catch (error) {
-        alert('Error registering user');
+        console.error("❌ Registration Error:", error);
     }
-});
+}
 
-// Login user
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(loginForm);
-    const data = Object.fromEntries(formData.entries());
-
+async function loginUser(username, password) {
     try {
         const response = await fetch('/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
         });
 
-        if (response.ok) {
-            alert('User logged in successfully');
-        } else {
-            alert('Error logging in user');
-        }
+        const data = await response.json();
+        console.log("✅ Login Response:", data);
     } catch (error) {
-        alert('Error logging in user');
+        console.error("❌ Login Error:", error);
     }
-});
+}
+
+   
 
 // Save city
 saveCityForm.addEventListener('submit', async (e) => {
