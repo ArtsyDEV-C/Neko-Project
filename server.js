@@ -83,6 +83,12 @@ app.post('/register', async (req, res) => {
 
         if (!username || !password) return res.status(400).json({ error: "Missing fields" });
 
+        // Check if the username already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ error: "Username already taken. Please choose another one." });
+        }
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -95,6 +101,7 @@ app.post('/register', async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 });
+
 
 app.post("/login", async (req, res) => {
     try {
