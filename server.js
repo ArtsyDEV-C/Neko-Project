@@ -44,7 +44,7 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cors());
 app.use(methodOverride('_method'));
 
-const path = require("path");
+
 app.use(express.static(path.resolve(__dirname, "public")));
 
 
