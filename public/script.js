@@ -98,9 +98,7 @@ async function getAPIKey() {
     try {
         const response = await fetch("/api/getApiKey");
         const data = await response.json();
-        API_KEY = data.apiKey;
-
-        if (!API_KEY) throw new Error("API key is missing.");
+        console.log("API Key Retrieved:", data.apiKey);
     } catch (error) {
         console.error("❌ Error fetching API key:", error);
     }
