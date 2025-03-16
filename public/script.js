@@ -207,19 +207,6 @@ function updateWeatherUI(data) {
         <div><strong>Day 10:</strong> Snowy - 5°C</div>
     `;
 
-let WEATHER_API_KEY;
-async function getWeatherAPIKey() {
-    try {
-        const response = await fetch("/api/getApiKey");
-        if (!response.ok) throw new Error("Failed to fetch API Key");
-
-        const data = await response.json();
-        WEATHER_API_KEY = data.apiKey;
-    } catch (error) {
-        console.error("❌ Error fetching API Key:", error);
-    }
-}
-getWeatherAPIKey();
 
 
 // Use the fetched API key for subsequent API calls
