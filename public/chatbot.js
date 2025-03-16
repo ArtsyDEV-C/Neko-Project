@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             const data = await response.json();
-            const botReply = data?.response?.trim()
+            const botReply = data?.response?.trim() || "I'm not sure how to respond.";
 
          // Display chatbot response
             chatbox.innerHTML += `<div class="message bot">${botReply}</div>`;
