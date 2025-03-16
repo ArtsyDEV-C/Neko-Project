@@ -599,22 +599,23 @@ async function fetchWeatherForecast(city) {
 }
 
 // Voice recognition for weather search
-if (!window.recognition) {
-    window.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    window.recognition.lang = "en-US";
-
-    window.recognition.onresult = (event) => {
+if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
+    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+    
+    recognition.onresult = (event) => {
         const city = event.results[0][0].transcript;
         console.log("Recognized City:", city);
         fetchWeather(city);
     };
 
-    // Start voice search when microphone button is clicked
     document.querySelector("#voice-search").addEventListener("click", () => {
-        window.recognition.start();
+        recognition.start();
     });
+} else {
+    console.warn("❌ Speech Recognition not supported in this browser.");
 }
-
+    
 async function fetchWeatherAlerts(city) {
     const apiKey = '2149cbc5da7384b8ef7bcccf62b0bf68'; // Replace with your OpenWeatherMap API Key
     const alertUrl = `https://api.openweathermap.org/data/2.5/alerts?q=${city}&appid=${apiKey}`;
