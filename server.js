@@ -102,27 +102,24 @@ app.post('/register', async (req, res) => {
     }
 });
 
-
 app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
     try {
-        const { username, password } = req.body;
         const user = await User.findOne({ username });
+        if (!user) return res.status(400).json({ error: "User not found" });
 
-        if (!user) {
-            return res.status(401).json({ error: "Invalid credentials" });
-        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(401).json({ error: "Invalid credentials" });
-        }
-
-        res.json({ message: "Login successful", user });
+        req.session.user = user;
+        res.json({ message: "✅ Login successful", user });
     } catch (error) {
-        console.error("❌ Login error:", error);
-        res.status(500).json({ error: "Server error" });
+        console.error("❌ Login Error:", error);
+        res.status(500).json({ error: "Server error. Try again later." });
     }
 });
+
+
 
 app.post('/cities', async (req, res) => {
     try {
