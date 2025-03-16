@@ -553,16 +553,16 @@ function getWeatherMedia(condition, timeOfDay) {
     };
 }
 
-
-  async function fetchWeatherForecast(city) {
-    await ensureAPIKey(); // Ensure the API key is available
+async function fetchWeatherForecast(city) {
+    await ensureAPIKey(); // Ensure API key is available
 
     const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${WEATHER_API_KEY}`;
 
     try {
         const response = await fetch(forecastUrl);
-        const data = await response.json();
+        if (!response.ok) throw new Error(`API Error: ${response.status} - ${response.statusText}`);
 
+        const data = await response.json();
         if (data.cod !== "200") {
             forecastContainer.innerHTML = `<div>Error fetching forecast data.</div>`;
             return;
@@ -584,7 +584,7 @@ function getWeatherMedia(condition, timeOfDay) {
             }
         });
 
-        // Generate HTML for the forecast
+        // Generate HTML for forecast
         let count = 0;
         for (let day in dailyForecasts) {
             if (count >= 10) break; // Show only 10 days
@@ -605,8 +605,9 @@ function getWeatherMedia(condition, timeOfDay) {
         console.error("❌ Forecast Fetch Error:", error);
         forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
     }
-}  
+}
 
+    
 
 // Voice recognition for weather search
 if (!window.recognition) {
