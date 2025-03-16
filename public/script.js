@@ -610,22 +610,24 @@ async function fetchWeatherForecast(city) {
     
 
 // Voice recognition for weather search
-if (!window.recognition) {
-    window.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    window.recognition.lang = "en-US";
-
-    window.recognition.onresult = (event) => {
+if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
+    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+    
+    recognition.onresult = (event) => {
         const city = event.results[0][0].transcript;
         console.log("Recognized City:", city);
         fetchWeather(city);
     };
 
     document.querySelector("#voice-search").addEventListener("click", () => {
-        window.recognition.start();
+        recognition.start();
     });
 } else {
     console.warn("❌ Speech Recognition not supported in this browser.");
 }
+
+
 
 
     
