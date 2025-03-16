@@ -212,6 +212,7 @@ function updateWeatherUI(data) {
         <div><strong>Day 9:</strong> Clear - 24°C</div>
         <div><strong>Day 10:</strong> Snowy - 5°C</div>
     `;
+}
 
 
 
