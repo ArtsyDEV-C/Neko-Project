@@ -345,19 +345,11 @@ registerForm.addEventListener('submit', async (e) => {
     const formData = new FormData(registerForm);
     const data = Object.fromEntries(formData.entries());
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(data.password, salt);
-
-    registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(registerForm);
-    const data = Object.fromEntries(formData.entries());
-
     try {
         const response = await fetch('/register', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)  // Remove bcrypt hashing in frontend
+            body: JSON.stringify(data)
         });
 
         const responseData = await response.json();
@@ -371,7 +363,8 @@ registerForm.addEventListener('submit', async (e) => {
         alert("❌ Error occurred during registration.");
     }
 });
-    
+
+
 async function loginUser(username, password) {
     try {
         const response = await fetch('/login', {
