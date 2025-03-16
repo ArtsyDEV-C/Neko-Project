@@ -604,22 +604,24 @@ function getWeatherMedia(condition, timeOfDay) {
 
 
 // Voice recognition for weather search
-if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
-    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "en-US";
-    
-    recognition.onresult = (event) => {
+if (!window.recognition) {
+    window.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    window.recognition.lang = "en-US";
+
+    window.recognition.onresult = (event) => {
         const city = event.results[0][0].transcript;
         console.log("Recognized City:", city);
         fetchWeather(city);
     };
 
     document.querySelector("#voice-search").addEventListener("click", () => {
-        recognition.start();
+        window.recognition.start();
     });
 } else {
     console.warn("❌ Speech Recognition not supported in this browser.");
 }
+
+
     
 async function fetchWeatherAlerts(city) {
     const apiKey = '2149cbc5da7384b8ef7bcccf62b0bf68'; // Replace with your OpenWeatherMap API Key
