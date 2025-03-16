@@ -43,7 +43,9 @@ app.use(express.json({ limit: "10mb" })); // Increase limit if needed
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cors());
 app.use(methodOverride('_method'));
-app.use(express.static('public'));
+const path = require("path");
+app.use(express.static(path.join(__dirname, "public")));
+
 
 // Express session
 app.use(session({
