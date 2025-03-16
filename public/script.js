@@ -93,7 +93,7 @@ const saveCityForm = document.querySelector('#save-city-form');
 
 
 
-let WEATHER_API_KEY;
+let WEATHER_API_KEY = null;  // Ensure variable is initialized
 async function getWeatherAPIKey() {
     try {
         const response = await fetch("/api/getApiKey");
