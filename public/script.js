@@ -290,8 +290,14 @@ function updateForecastUI(forecastList) {
 
 // Get user's current location
 
+// Replace the existing function with the updated code below
 navigator.geolocation.getCurrentPosition(async (position) => {
     try {
+        while (!WEATHER_API_KEY) {
+            console.warn("Waiting for API Key. Retrying...");
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for API key to load
+        }
+
         const { latitude, longitude } = position.coords;
         const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`;
 
@@ -308,6 +314,7 @@ navigator.geolocation.getCurrentPosition(async (position) => {
     alert("Location permission denied. Enter city manually.");
 });
 
+    
 // Add console debugging message
 console.log("Weather app initialized successfully.");
 
