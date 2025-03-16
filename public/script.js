@@ -270,6 +270,7 @@ async function fetchWeather(city) {
 }
 
     
+
 // Function to update forecast data on the page
 function updateForecastUI(forecastList) {
     const forecastContainer = document.getElementById('forecast');
@@ -293,6 +294,13 @@ function updateForecastUI(forecastList) {
         forecastContainer.innerHTML += forecastHTML;
     }
 }
+
+catch (error) {
+    console.error("❌ Forecast Fetch Error:", error);
+    forecastContainer.innerHTML = `<div>Error fetching forecast.</div>`;
+}
+
+
 
 // Get user's current location
 
