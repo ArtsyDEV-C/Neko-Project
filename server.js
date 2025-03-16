@@ -208,7 +208,7 @@ app.use(express.json());
 app.use(cors());
 
 // Connect MongoDB
- async function connectDB() {
+async function connectDB() {
     try {
         await mongoose.connect(process.env.MONGO_URI);
         console.log("✅ MongoDB Connected");
@@ -218,15 +218,9 @@ app.use(cors());
     }
 }
 connectDB();
-      
 
 
-    } catch (err) {
-        console.error("❌ MongoDB Connection Error:", err);
-        process.exit(1);
-    }
-}
-connectDB();
+
 
 
 async function generateAIResponse(userMessage) {
@@ -276,6 +270,34 @@ app.post("/test", async (req, res) => {
     console.log(req.body); // ✅ Access `req.body` normally
     res.send("Success");
 });
+
+ Fix /api/weather Route
+Issue at Line 133 & 276:
+Weather API response is being returned twice (res.json(response.data); is repeated).
+Ensure API key is validated before making a request.
+✅ Fix for Lines 133 & 276-280
+
+❌ Remove Incorrect Code:
+js
+Copy
+Edit
+app.get("/api/weather", async (req, res) => {
+    const city = req.query.city;
+    if (!city) {
+        return res.status(400).json({ error: "City name required" });
+    }
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch weather data" });
+    }
+});
+
 
 app.get("/api/weather", async (req, res) => {
     const city = req.query.city;
