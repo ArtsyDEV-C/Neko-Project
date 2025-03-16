@@ -208,7 +208,10 @@ app.use(cors());
 // Connect MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
-  .catch(err => console.error("❌ MongoDB Connection Error:", err));
+  .catch(err => {
+     console.error("❌ MongoDB Connection Error:", err));
+     process.exit(1);
+  });
 
 async function generateAIResponse(userMessage) {
     const aiResponse = await openai.chat.completions.create({
