@@ -226,25 +226,38 @@ function updateWeatherUI(data) {
 
 
 // Use the fetched API key for subsequent API calls
-async function fetchWeatherAlerts(city) {
-    if (!WEATHER_API_KEY) {
-        console.error("⚠️ Warning: OpenWeather API Key is missing. Weather data may not work.");
+async function fetchWeather(city) {
+    if (!city || city.trim() === "") {
+        alert("Please enter a valid city name.");
         return;
     }
 
-    const alertUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${WEATHER_API_KEY}`;
+    if (!WEATHER_API_KEY) {
+        await ensureAPIKey();
+        if (!WEATHER_API_KEY) {
+            alert("❌ API Key is still missing. Cannot fetch weather data.");
+            return;
+        }
+    }
+
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${WEATHER_API_KEY}`;
 
     try {
-        const response = await fetch(alertUrl);
-        if (!response.ok) throw new Error(`API Error ${response.status}: ${response.statusText}`);
-        
+        loadingSpinner.style.display = "block"; // Show loading animation
+
+        const response = await fetch(weatherUrl);
+        if (!response.ok) throw new Error(`Error: ${response.status} - ${response.statusText}`);
+
         const data = await response.json();
-        return data;
+        updateWeatherUI(data);
     } catch (error) {
-        console.error("❌ Weather API Error:", error.message);
-        return null;
+        alert(`❌ Error fetching weather: ${error.message}`);
+        console.error("❌ Weather Fetch Error:", error);
+    } finally {
+        loadingSpinner.style.display = "none"; // Hide loading animation
     }
 }
+
 
 // Call the function with appropriate city
 fetchWeatherAlerts('YOUR_CITY_HERE');
