@@ -80,6 +80,7 @@ app.get('/public/videos/:filename', (req, res) => {
 // Routes
 const bcrypt = require("bcryptjs");
 
+
 app.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -104,6 +105,8 @@ app.post('/register', async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
+
 
 
 app.post('/login', async (req, res) => {
