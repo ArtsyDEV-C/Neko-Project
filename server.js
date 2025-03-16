@@ -20,13 +20,18 @@ const port = process.env.PORT || Math.floor(Math.random() * (50000 - 3000) + 300
 
 // API route to send API key to frontend
 app.get("/api/getApiKey", (req, res) => {
-    if (!process.env.OPENWEATHER_API_KEY || process.env.OPENWEATHER_API_KEY.trim() === "") {
+    const apiKey = process.env.OPENWEATHER_API_KEY;
+    
+    if (!apiKey || apiKey.trim() === "") {
         console.error("❌ API Key missing from environment variables.");
         return res.status(500).json({ error: "API Key not found" });
     }
-    console.log("✅ API Key successfully retrieved:", process.env.OPENWEATHER_API_KEY);
-    res.json({ apiKey: process.env.OPENWEATHER_API_KEY.trim() });
+
+    console.log("✅ API Key successfully retrieved:", apiKey);
+    res.json({ apiKey: apiKey.trim() });  // Trim any spaces to avoid issues
 });
+
+
 
 // Twilio configuration
 const twilioClient = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
