@@ -44,7 +44,8 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cors());
 app.use(methodOverride('_method'));
 
-app.use(express.static(path.join(__dirname, "public")));
+const path = require("path");
+app.use(express.static(path.resolve(__dirname, "public")));
 
 
 // Express session
